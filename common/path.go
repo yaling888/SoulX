@@ -8,6 +8,8 @@ import (
 
 const Name = "clash"
 
+var ExecutableDir = getExecutableDir()
+
 // Path is used to get the configuration path
 var Path = func() *path {
 	homeDir, err := os.UserHomeDir()
@@ -30,4 +32,38 @@ func (p *path) HomeDir() string {
 
 func (p *path) ConfigFile() string {
 	return filepath.Join(p.homeDir, p.configFile)
+}
+
+func (p *path) MMDB() string {
+	return P.Join(p.homeDir, "Country.mmdb")
+}
+
+func (p *path) GeoSite() string {
+	return P.Join(p.homeDir, "geosite.dat")
+}
+
+func (p *path) ExternalUI() string {
+	return P.Join(p.homeDir, "dashboard")
+}
+
+func (p *path) Resolve(path string) string {
+	if !filepath.IsAbs(path) {
+		return filepath.Join(p.homeDir, path)
+	}
+
+	return path
+}
+
+func getExecutableDir() string {
+	fullExecPath, _ := os.Executable()
+	dir, _ := filepath.Split(fullExecPath)
+	return dir
+}
+
+func ResolveExecutableResourcesDir(path string) string {
+	if !filepath.IsAbs(path) {
+		return filepath.Join(ExecutableDir, "resources", path)
+	}
+
+	return path
 }

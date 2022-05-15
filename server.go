@@ -35,3 +35,26 @@ func reloadConfig() error {
 
 	return nil
 }
+
+func updateGeoDatabase() error {
+	c, err := common.Parse()
+	if err != nil {
+		return err
+	}
+
+	req := common.MakeRequest(c)
+
+	fail := common.HTTPError{}
+
+	resp, err := req.R().SetError(&fail).Post("/configs/geo")
+
+	if err != nil {
+		return err
+	}
+
+	if resp.IsError() {
+		return fmt.Errorf("request failed: %s", fail.Message)
+	}
+
+	return nil
+}

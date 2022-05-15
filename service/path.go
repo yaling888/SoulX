@@ -1,3 +1,5 @@
+//go:build windows
+
 package main
 
 import (
@@ -16,7 +18,7 @@ func LogOutFile() string {
 	p := filepath.Join(homeDir, "log")
 	_, err := os.Stat(p)
 	if err != nil {
-		os.MkdirAll(p, os.ModePerm)
+		_ = os.MkdirAll(p, os.ModePerm)
 	}
 	return filepath.Join(homeDir, "log", "soul_out.log")
 }
@@ -58,10 +60,12 @@ func GetHomeDir() (string, error) {
 
 	f, err := os.OpenFile(p, os.O_CREATE|os.O_RDWR, os.ModePerm)
 	if err != nil {
-		logger.Warningf("Failed to open std err %q: %v", p, err)
+		_ = logger.Warningf("Failed to open std err %q: %v", p, err)
 		return "", err
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	content, err := io.ReadAll(f)
 
@@ -69,7 +73,7 @@ func GetHomeDir() (string, error) {
 	if strings.TrimSpace(pa) == "" {
 		pa, _ = os.UserHomeDir()
 		pa = filepath.Join(pa, ".config", "clash")
-		io.WriteString(f, pa)
+		_, _ = io.WriteString(f, pa)
 	}
 
 	return pa, nil

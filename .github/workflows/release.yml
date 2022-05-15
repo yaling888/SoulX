@@ -28,18 +28,59 @@ jobs:
           make windows-amd64
 
           cd bin/core
-          curl https://www.python.org/ftp/python/3.9.11/python-3.9.11-embed-amd64.zip -o py39-embed-amd64.zip
-          Expand-Archive -Path py39-embed-amd64.zip -DestinationPath py && cd py
+          curl -L https://www.python.org/ftp/python/3.9.12/python-3.9.12-embed-amd64.zip -o py39-embed-amd64.zip
+          Expand-Archive -Path py39-embed-amd64.zip -DestinationPath py
+          
+          cd py
           cp python39.zip ../
-          cp python39.dll ../ && cd ..
+          cp python39.dll ../
+          cd ../
+          
           Remove-Item -Force py39-embed-amd64.zip
-          Remove-Item -Force -Recurse py && cd ../..
+          Remove-Item -Force -Recurse py
+          
+          cd ../
+          
+          mkdir resources
+          cd resources
+          
+          curl -L https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb -o Country.mmdb
+          curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -o geosite.dat
+          curl -L https://github.com/yaling888/yacd/archive/gh-pages.zip -o yacd-gh-pages.zip
+          
+          Expand-Archive -Path yacd-gh-pages.zip -DestinationPath .
+          
+          Rename-Item yacd-gh-pages dashboard
+          
+          Compress-Archive -Path Country.mmdb -DestinationPath Country.mmdb.zip
+          Compress-Archive -Path geosite.dat -DestinationPath geosite.dat.zip
+          Compress-Archive -Path dashboard -DestinationPath dashboard.zip
+          
+          Remove-Item -Force Country.mmdb
+          Remove-Item -Force geosite.dat
+          Remove-Item -Force yacd-gh-pages.zip
+          
+          cd ../../
+          
           Rename-Item bin soulx && cd soulx
-          Compress-Archive -Path . -DestinationPath ../released/SoulX_$(Get-Date -Format 'yyyyMMdd')_$(git describe --tags --always).zip
+          Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-$(git describe --tags --always).zip
+
+      - name: Set sha date
+        id: sha_date
+        run: |
+          echo "::set-output name=file_sha::$(git describe --tags --always)"
+          echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
+
+      - name: Upload files to Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
+          path: |
+            released/*
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: released/*
-          draft: false
+          draft: true

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/url"
 
 	"github.com/getlantern/systray"
@@ -13,6 +14,7 @@ import (
 )
 
 func main() {
+	go common.InitResourcesIfNotExist()
 	systray.Run(onReady, onExit)
 }
 
@@ -36,11 +38,13 @@ func onReady() {
 			hasStarted = true
 		}
 
-		mSwitch := systray.AddMenuItemCheckbox("开启Soul", "启动/停止Soul", hasStarted)
+		mSwitch := systray.AddMenuItemCheckbox("开启代理", "启动/关闭代理", hasStarted)
 		mController := systray.AddMenuItem("控制台", "打开控制台")
 
 		mFunc := systray.AddMenuItem("功能设置", "功能设置")
-		mReload := mFunc.AddSubMenuItem("重载配置", "重新加载配置文件")
+		mEdit := mFunc.AddSubMenuItem("编辑配置文件", "编辑配置文件")
+		mReload := mFunc.AddSubMenuItem("重载配置文件", "重新加载配置文件")
+		mUpdateGeo := mFunc.AddSubMenuItem("更新 GEO 数据库文件(yaling888核心)", "更新 GEO 数据库文件")
 		mStartOnBoot := mFunc.AddSubMenuItemCheckbox("加入系统服务", "安装/卸载系统服务", hasInstalled)
 
 		systray.AddSeparator()
@@ -55,6 +59,7 @@ func onReady() {
 		if !hasStarted {
 			mController.Hide()
 			mReload.Hide()
+			mUpdateGeo.Hide()
 		}
 
 		for {
@@ -74,6 +79,7 @@ func onReady() {
 						mSwitch.Check()
 						mController.Show()
 						mReload.Show()
+						mUpdateGeo.Show()
 					}
 				} else {
 					err = stopService()
@@ -82,21 +88,36 @@ func onReady() {
 						mSwitch.Uncheck()
 						mController.Hide()
 						mReload.Hide()
+						mUpdateGeo.Hide()
 					}
 				}
+			case <-mEdit.ClickedCh:
+				_ = open.Start(common.Path.ConfigFile())
 			case <-mReload.ClickedCh:
 				_ = reloadConfig()
+			case <-mUpdateGeo.ClickedCh:
+				_ = updateGeoDatabase()
 			case <-mController.ClickedCh:
 				c, err := common.Parse()
 				if err != nil {
 					continue
 				}
-				ctrUrl := &url.URL{
-					Scheme: "http",
-					Host:   c.ExternalController,
-					Path:   "/ui/",
+
+				host, port, err := net.SplitHostPort(c.ExternalController)
+				if err != nil {
+					continue
 				}
-				_ = open.Run(ctrUrl.String())
+
+				ctrUrlQuery := "?hostname=" + host + "&port=" + port + "&secret=" + url.QueryEscape(c.Secret) + "&theme=auto"
+
+				ctrUrl := "http://" + c.ExternalController + "/ui/"
+
+				if c.ExternalUI == "" {
+					ctrUrl = "https://yacd.clash-plus.cf/#/connections"
+				}
+
+				ctrUrl += ctrUrlQuery
+				_ = open.Run(ctrUrl)
 			case <-mStartOnBoot.ClickedCh:
 				if !hasInstalled {
 					err = installService()
@@ -113,6 +134,7 @@ func onReady() {
 								mSwitch.Uncheck()
 								mController.Hide()
 								mReload.Hide()
+								mUpdateGeo.Hide()
 							}
 						}
 

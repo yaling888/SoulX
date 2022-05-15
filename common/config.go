@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"net"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -9,6 +10,7 @@ import (
 
 type Config struct {
 	ExternalController string `yaml:"external-controller" json:"external-controller"`
+	ExternalUI         string `yaml:"external-ui" json:"external-ui"`
 	Secret             string `yaml:"secret" json:"secret"`
 }
 
@@ -48,5 +50,27 @@ func ParseConfig(buf []byte) (*Config, error) {
 		return nil, err
 	}
 
+	if host, port, err := net.SplitHostPort(config.ExternalController); err == nil {
+		if ip := net.ParseIP(host); ip != nil && ip.IsUnspecified() {
+			config.ExternalController = net.JoinHostPort("127.0.0.1", port)
+		}
+	}
+
 	return config, nil
+}
+
+func InitResourcesIfNotExist() {
+	dir := Path.HomeDir()
+
+	if _, err := os.Stat(Path.MMDB()); os.IsNotExist(err) {
+		_, _ = ExtractZipFile(ResolveExecutableResourcesDir("Country.mmdb.zip"), dir)
+	}
+
+	if _, err := os.Stat(Path.GeoSite()); os.IsNotExist(err) {
+		_, _ = ExtractZipFile(ResolveExecutableResourcesDir("geosite.dat.zip"), dir)
+	}
+
+	if _, err := os.Stat(Path.ExternalUI()); os.IsNotExist(err) {
+		_, _ = ExtractZipFile(ResolveExecutableResourcesDir("dashboard.zip"), dir)
+	}
 }
