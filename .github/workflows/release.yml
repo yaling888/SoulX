@@ -59,6 +59,7 @@ jobs:
           Remove-Item -Force Country.mmdb
           Remove-Item -Force geosite.dat
           Remove-Item -Force yacd-gh-pages.zip
+          Remove-Item -Force -Recurse dashboard/
           
           cd ../../
           
@@ -73,6 +74,7 @@ jobs:
 
       - name: Upload files to Artifacts
         uses: actions/upload-artifact@v2
+        if: startsWith(github.ref, 'refs/tags/') == false
         with:
           name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
           path: |
