@@ -110,13 +110,13 @@ func onReady() {
 
 				ctrUrlQuery := "?hostname=" + host + "&port=" + port + "&secret=" + url.QueryEscape(c.Secret) + "&theme=auto"
 
-				ctrUrl := "http://" + c.ExternalController + "/ui/"
-
+				var ctrUrl string
 				if c.ExternalUI == "" {
-					ctrUrl = "https://yacd.clash-plus.cf/#/connections"
+					ctrUrl = "https://yacd.clash-plus.cf/" + ctrUrlQuery + "#/connections"
+				} else {
+					ctrUrl = "http://" + c.ExternalController + "/ui/" + ctrUrlQuery
 				}
 
-				ctrUrl += ctrUrlQuery
 				_ = open.Run(ctrUrl)
 			case <-mStartOnBoot.ClickedCh:
 				if !hasInstalled {
