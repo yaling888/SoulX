@@ -44,7 +44,7 @@ func onReady() {
 		mFunc := systray.AddMenuItem("功能设置", "功能设置")
 		mEdit := mFunc.AddSubMenuItem("编辑配置文件", "编辑配置文件")
 		mReload := mFunc.AddSubMenuItem("重载配置文件", "重新加载配置文件")
-		mUpdateGeo := mFunc.AddSubMenuItem("更新 GEO 数据库文件(yaling888核心)", "更新 GEO 数据库文件")
+		mUpdateGeo := mFunc.AddSubMenuItem("更新 GEO 数据库文件", "更新 GEO 数据库文件")
 		mStartOnBoot := mFunc.AddSubMenuItemCheckbox("加入系统服务", "安装/卸载系统服务", hasInstalled)
 
 		systray.AddSeparator()
@@ -92,7 +92,7 @@ func onReady() {
 					}
 				}
 			case <-mEdit.ClickedCh:
-				_ = open.Start(common.Path.ConfigFile())
+				_ = open.StartWith(common.Path.ConfigFile(), "notepad")
 			case <-mReload.ClickedCh:
 				_ = reloadConfig()
 			case <-mUpdateGeo.ClickedCh:
