@@ -42,6 +42,7 @@ func onReady() {
 		mController := systray.AddMenuItem("控制台", "打开控制台")
 
 		mFunc := systray.AddMenuItem("功能设置", "功能设置")
+		mOpenLogs := mFunc.AddSubMenuItem("查看日志文件", "查看日志文件")
 		mEdit := mFunc.AddSubMenuItem("编辑配置文件", "编辑配置文件")
 		mReload := mFunc.AddSubMenuItem("重载配置文件", "重新加载配置文件")
 		mUpdateGeo := mFunc.AddSubMenuItem("更新 GEO 数据库文件", "更新 GEO 数据库文件")
@@ -91,6 +92,8 @@ func onReady() {
 						mUpdateGeo.Hide()
 					}
 				}
+			case <-mOpenLogs.ClickedCh:
+				_ = open.Start(common.Path.Resolve("log"))
 			case <-mEdit.ClickedCh:
 				_ = open.StartWith(common.Path.ConfigFile(), "notepad")
 			case <-mReload.ClickedCh:
