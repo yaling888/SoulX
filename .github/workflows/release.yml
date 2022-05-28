@@ -39,6 +39,18 @@ jobs:
           Remove-Item -Force py39-embed-amd64.zip
           Remove-Item -Force -Recurse py
           
+          curl -LO https://github.com/yaling888/clash/releases/download/plus/version.txt
+          
+          $core_version = Get-Content version.txt
+          
+          curl -LO https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-$(core_version).zip
+          curl -LO https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-v3-$(core_version).zip
+          
+          Expand-Archive -Path clash-plus-windows-amd64-$(core_version).zip -DestinationPath .
+          
+          Remove-Item -Force version.txt
+          Remove-Item -Force clash-plus-windows-amd64-$(core_version).zip
+          
           cd ../
           
           mkdir resources
