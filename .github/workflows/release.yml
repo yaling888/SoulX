@@ -43,13 +43,13 @@ jobs:
           
           $core_version = Get-Content version.txt
           
-          curl -LO https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-$(core_version).zip
-          curl -LO https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-v3-$(core_version).zip
+          curl -LO "https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-$core_version.zip"
+          curl -LO "https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-v3-$core_version.zip"
           
-          Expand-Archive -Path clash-plus-windows-amd64-$(core_version).zip -DestinationPath .
+          Expand-Archive -Path "clash-plus-windows-amd64-$core_version.zip" -DestinationPath .
           
           Remove-Item -Force version.txt
-          Remove-Item -Force clash-plus-windows-amd64-$(core_version).zip
+          Remove-Item -Force "clash-plus-windows-amd64-$core_version.zip"
           
           cd ../
           
