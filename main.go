@@ -19,7 +19,7 @@ func main() {
 }
 
 func onReady() {
-	systray.SetTemplateIcon(icon.Icon, icon.Icon128)
+	systray.SetTemplateIcon(icon.Icon128, icon.Icon128)
 	systray.SetTitle("SoulX")
 	systray.SetTooltip("SoulX")
 
@@ -46,7 +46,7 @@ func onReady() {
 		mEdit := mFunc.AddSubMenuItem("编辑配置文件", "编辑配置文件")
 		mReload := mFunc.AddSubMenuItem("重载配置文件", "重新加载配置文件")
 		mUpdateGeo := mFunc.AddSubMenuItem("更新 GEO 数据库文件", "更新 GEO 数据库文件")
-		mStartOnBoot := mFunc.AddSubMenuItemCheckbox("加入系统服务", "安装/卸载系统服务", hasInstalled)
+		mStartOnBoot := mFunc.AddSubMenuItemCheckbox("系统服务", "安装/卸载系统服务", hasInstalled)
 
 		systray.AddSeparator()
 		mAbout := systray.AddMenuItem("关于", "关于")
@@ -55,7 +55,7 @@ func onReady() {
 		mAbout.AddSubMenuItem(fmt.Sprintf("Date：%s", constant.BuildTime), "").Disable()
 
 		systray.AddSeparator()
-		mQuit := systray.AddMenuItem("退出", "退出SoulX")
+		mQuit := systray.AddMenuItem("退出托盘", "退出SoulX")
 
 		if !hasStarted {
 			mController.Hide()
@@ -93,9 +93,9 @@ func onReady() {
 					}
 				}
 			case <-mOpenLogs.ClickedCh:
-				_ = open.Start(common.Path.Resolve("log"))
+				_ = open.Run(common.Path.Resolve("log"))
 			case <-mEdit.ClickedCh:
-				_ = open.StartWith(common.Path.ConfigFile(), "notepad")
+				_ = open.RunWith(common.Path.ConfigFile(), "notepad")
 			case <-mReload.ClickedCh:
 				_ = reloadConfig()
 			case <-mUpdateGeo.ClickedCh:

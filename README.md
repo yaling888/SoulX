@@ -12,4 +12,4 @@ soulx
 ```
 
 ## Core
-Download from [Clash Plus Pro](https://github.com/yaling888/clash/releases/tag/plus)
+Download from [Clash Plus Pro](https://github.com/yaling888/clash/releases/tag/plus_pro)

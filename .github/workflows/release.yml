@@ -39,17 +39,17 @@ jobs:
           Remove-Item -Force py39-embed-amd64.zip
           Remove-Item -Force -Recurse py
           
-          curl -LO https://github.com/yaling888/clash/releases/download/plus/version.txt
+          curl -LO https://github.com/yaling888/clash/releases/download/plus_pro/version.txt
           
           $core_version = Get-Content version.txt
           
-          curl -LO "https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-$core_version.zip"
-          curl -LO "https://github.com/yaling888/clash/releases/download/plus/clash-plus-windows-amd64-v3-$core_version.zip"
+          curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-$core_version.zip"
+          curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-v3-$core_version.zip"
           
-          Expand-Archive -Path "clash-plus-windows-amd64-$core_version.zip" -DestinationPath .
+          Expand-Archive -Path "clash-plus-pro-windows-amd64-$core_version.zip" -DestinationPath .
           
           Remove-Item -Force version.txt
-          Remove-Item -Force "clash-plus-windows-amd64-$core_version.zip"
+          Remove-Item -Force "clash-plus-pro-windows-amd64-$core_version.zip"
           
           cd ../
           
@@ -77,6 +77,12 @@ jobs:
           
           Rename-Item bin soulx && cd soulx
           Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-$(git describe --tags --always).zip
+          
+          cd core
+          Remove-Item -Force "clash-plus-pro-windows-amd64.exe"
+          Remove-Item -Force "clash-plus-pro-windows-amd64-v3-$core_version.zip"
+          cd ../
+          Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-without-core-$(git describe --tags --always).zip
 
       - name: Set sha date
         id: sha_date
