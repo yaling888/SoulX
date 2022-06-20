@@ -5,8 +5,7 @@ go 1.17
 require (
 	github.com/getlantern/systray v1.2.1
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/kardianos/service v1.2.1
-	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
+	github.com/kardianos/service v1.2.2-0.20220428125717-29f8c79c511b
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -19,6 +18,6 @@ require (
 	github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
+	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
 )

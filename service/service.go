@@ -36,7 +36,7 @@ type program struct {
 func (p *program) Start(s service.Service) error {
 	fullExec, err := exec.LookPath(p.Exec)
 	if err != nil {
-		return fmt.Errorf("Failed to find executable %q: %v", p.Exec, err)
+		return fmt.Errorf("failed to find executable %q: %v", p.Exec, err)
 	}
 
 	p.cmd = exec.Command(fullExec, "-d", homeDir)
@@ -47,19 +47,19 @@ func (p *program) Start(s service.Service) error {
 }
 
 func (p *program) run() {
-	logger.Info("Starting ", p.DisplayName)
+	_ = logger.Info("Starting ", p.DisplayName)
 	defer func() {
 		if service.Interactive() {
-			p.Stop(p.service)
+			_ = p.Stop(p.service)
 		} else {
-			p.service.Stop()
+			_ = p.service.Stop()
 		}
 	}()
 
 	if p.Stderr != "" {
 		f, err := os.OpenFile(p.Stderr, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0777)
 		if err != nil {
-			logger.Warningf("Failed to open std err %q: %v", p.Stderr, err)
+			_ = logger.Warningf("Failed to open std err %q: %v", p.Stderr, err)
 			return
 		}
 		defer f.Close()
@@ -68,7 +68,7 @@ func (p *program) run() {
 	if p.Stdout != "" {
 		f, err := os.OpenFile(p.Stdout, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0777)
 		if err != nil {
-			logger.Warningf("Failed to open std out %q: %v", p.Stdout, err)
+			_ = logger.Warningf("Failed to open std out %q: %v", p.Stdout, err)
 			return
 		}
 		defer f.Close()
@@ -77,7 +77,7 @@ func (p *program) run() {
 
 	err := p.cmd.Run()
 	if err != nil {
-		logger.Warningf("Error running: %v", err)
+		_ = logger.Warningf("Error running: %v", err)
 	}
 
 	return
@@ -85,11 +85,11 @@ func (p *program) run() {
 
 func (p *program) Stop(s service.Service) error {
 	close(p.exit)
-	logger.Info("Stopping ", p.DisplayName)
+	_ = logger.Info("Stopping ", p.DisplayName)
 	if p.cmd.Process != nil {
 		err := terminateProc(p.cmd.Process)
 		if err != nil {
-			p.cmd.Process.Kill()
+			_ = p.cmd.Process.Kill()
 		}
 	}
 	if service.Interactive() {
@@ -158,7 +158,7 @@ func main() {
 	}
 	err = s.Run()
 	if err != nil {
-		logger.Error(err)
+		_ = logger.Error(err)
 	}
 }
 

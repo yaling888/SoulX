@@ -20,7 +20,7 @@ jobs:
 
           cd service && make windows-amd64 && cd ..
 
-          rsrc -arch amd64 -manifest soulx.manifest -ico icon/32.ico,icon/48.ico,icon/64.ico,icon/128.ico,icon/256.ico -o soulx.syso
+          rsrc -arch amd64 -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx.syso
 
           ((Get-Content -path constant/version.go -Raw) -replace 'unknown version',$(git describe --tags --always)) | Set-Content -Path constant/version.go
           ((Get-Content -path constant/version.go -Raw) -replace 'unknown time',$(Get-Date -Format 'yyyy-MM-dd')) | Set-Content -Path constant/version.go
@@ -28,16 +28,6 @@ jobs:
           make windows-amd64
 
           cd bin/core
-          curl -L https://www.python.org/ftp/python/3.9.12/python-3.9.12-embed-amd64.zip -o py39-embed-amd64.zip
-          Expand-Archive -Path py39-embed-amd64.zip -DestinationPath py
-          
-          cd py
-          cp python39.zip ../
-          cp python39.dll ../
-          cd ../
-          
-          Remove-Item -Force py39-embed-amd64.zip
-          Remove-Item -Force -Recurse py
           
           curl -LO https://github.com/yaling888/clash/releases/download/plus_pro/version.txt
           

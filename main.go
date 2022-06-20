@@ -7,8 +7,8 @@ import (
 
 	"github.com/getlantern/systray"
 	"github.com/kardianos/service"
-	"github.com/skratchdot/open-golang/open"
 	"github.com/yaling888/soulx/common"
+	"github.com/yaling888/soulx/common/open"
 	"github.com/yaling888/soulx/constant"
 	"github.com/yaling888/soulx/icon"
 )
@@ -39,8 +39,11 @@ func onReady() {
 		}
 
 		mSwitch := systray.AddMenuItemCheckbox("开启代理", "启动/关闭代理", hasStarted)
+
+		systray.AddSeparator()
 		mController := systray.AddMenuItem("控制台", "打开控制台")
 
+		systray.AddSeparator()
 		mFunc := systray.AddMenuItem("功能设置", "功能设置")
 		mOpenLogs := mFunc.AddSubMenuItem("查看日志文件", "查看日志文件")
 		mEdit := mFunc.AddSubMenuItem("编辑配置文件", "编辑配置文件")
@@ -115,7 +118,7 @@ func onReady() {
 
 				var ctrUrl string
 				if c.ExternalUI == "" {
-					ctrUrl = "https://yacd.clash-plus.cf/" + ctrUrlQuery + "#/connections"
+					ctrUrl = "https://yacd.eu.org/" + ctrUrlQuery + "#/connections"
 				} else {
 					ctrUrl = "http://" + c.ExternalController + "/ui/" + ctrUrlQuery
 				}
