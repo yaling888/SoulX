@@ -15,7 +15,7 @@ jobs:
       - name: Build
         run: |
           go install github.com/akavel/rsrc@latest
-          mkdir -p bin/core/py
+          mkdir -p bin/core
           mkdir released
 
           cd service && make windows-amd64 && cd ..
@@ -36,10 +36,10 @@ jobs:
           curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-$core_version.zip"
           curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-v3-$core_version.zip"
           
-          Expand-Archive -Path "clash-plus-pro-windows-amd64-$core_version.zip" -DestinationPath .
+          Expand-Archive -Path "clash-plus-pro-windows-amd64-v3-$core_version.zip" -DestinationPath .
           
           Remove-Item -Force version.txt
-          Remove-Item -Force "clash-plus-pro-windows-amd64-$core_version.zip"
+          Remove-Item -Force "clash-plus-pro-windows-amd64-v3-$core_version.zip"
           
           cd ../
           
@@ -69,24 +69,24 @@ jobs:
           Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-$(git describe --tags --always).zip
           
           cd core
-          Remove-Item -Force "clash-plus-pro-windows-amd64.exe"
-          Remove-Item -Force "clash-plus-pro-windows-amd64-v3-$core_version.zip"
+          Remove-Item -Force "clash-plus-pro-windows-amd64-v3.exe"
+          Remove-Item -Force "clash-plus-pro-windows-amd64-$core_version.zip"
           cd ../
           Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-without-core-$(git describe --tags --always).zip
 
-      - name: Set sha date
-        id: sha_date
-        run: |
-          echo "::set-output name=file_sha::$(git describe --tags --always)"
-          echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
+      #- name: Set sha date
+      #  id: sha_date
+      #  run: |
+      #    echo "::set-output name=file_sha::$(git describe --tags --always)"
+      #    echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
 
-      - name: Upload files to Artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(github.ref, 'refs/tags/') == false
-        with:
-          name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
-          path: |
-            released/*
+      #- name: Upload files to Artifacts
+      #  uses: actions/upload-artifact@v2
+      #  if: startsWith(github.ref, 'refs/tags/') == false
+      #  with:
+      #    name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
+      #    path: |
+      #      released/*
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
