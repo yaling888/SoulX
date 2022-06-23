@@ -53,9 +53,10 @@ func onReady() {
 
 		systray.AddSeparator()
 		mAbout := systray.AddMenuItem("关于", "关于")
-		mAbout.AddSubMenuItem("         SoulX", "SoulX").Disable()
+		mAbout.AddSubMenuItem("          SoulX", "SoulX").Disable()
+		mAbout.AddSubMenuItem("Version：%s", "SoulX").Disable()
 		mAbout.AddSubMenuItem(fmt.Sprintf("Version：%s", constant.Version), "").Disable()
-		mAbout.AddSubMenuItem(fmt.Sprintf("Date：%s", constant.BuildTime), "").Disable()
+		mAbout.AddSubMenuItem(fmt.Sprintf("Date   ：%s", constant.BuildTime), "").Disable()
 
 		systray.AddSeparator()
 		mQuit := systray.AddMenuItem("退出托盘", "退出SoulX")

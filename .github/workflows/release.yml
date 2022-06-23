@@ -94,13 +94,13 @@ jobs:
           echo "::set-output name=file_sha::$(git describe --tags --always)"
           echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
 
-      - name: Upload files to Artifacts
-        uses: actions/upload-artifact@v2
-        if: startsWith(github.ref, 'refs/tags/') == false
-        with:
-          name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
-          path: |
-            bin/*
+      #- name: Upload files to Artifacts
+      #  uses: actions/upload-artifact@v2
+      #  if: startsWith(github.ref, 'refs/tags/') == false
+      #  with:
+      #    name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
+      #    path: |
+      #      bin/*
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1

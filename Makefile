@@ -2,8 +2,8 @@ NAME=SoulX
 BINDIR=bin
 VERSION=$(shell git describe --tags --always || echo "unknown version")
 BUILDTIME=$(shell date -u +%F)
-GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-X "github.com/yaling888/soulx/constant/version.Version=$(VERSION)" \
-                		-X "github.com/yaling888/soulx/constant/version.BuildTime=$(BUILDTIME)" \
+GOBUILD=CGO_ENABLED=0 go build -trimpath -ldflags '-X "github.com/yaling888/soulx/constant.Version=$(VERSION)" \
+                		-X "github.com/yaling888/soulx/constant.BuildTime=$(BUILDTIME)" \
                 		-w -s -H=windowsgui -buildid='
 
 WINDOWS_ARCH_LIST = \

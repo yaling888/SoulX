@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/getlantern/systray v1.2.1
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/kardianos/service v1.2.2-0.20220428125717-29f8c79c511b
-	gopkg.in/yaml.v2 v2.4.0
+	github.com/kardianos/service v1.2.1
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
