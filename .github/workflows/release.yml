@@ -2,7 +2,7 @@ name: Release
 on: [push]
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
@@ -15,82 +15,101 @@ jobs:
       - name: Build
         run: |
           go install github.com/akavel/rsrc@latest
-          mkdir -p bin/core
-          mkdir released
 
-          cd service && make windows-amd64 && cd ..
+          rsrc -arch amd64 -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx_windows_amd64.syso
+          rsrc -arch arm64 -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx_windows_arm64.syso
+          rsrc -arch 386 -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx_windows_386.syso
+          rsrc -arch arm -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx_windows_arm.syso
+          
+          cd service && make -j releases && cd ..
+          
+          make -j releases
 
-          rsrc -arch amd64 -manifest soulx.manifest -ico icon/256.ico,icon/128.ico,icon/64.ico,icon/48.ico,icon/32.ico -o soulx.syso
-
-          ((Get-Content -path constant/version.go -Raw) -replace 'unknown version',$(git describe --tags --always)) | Set-Content -Path constant/version.go
-          ((Get-Content -path constant/version.go -Raw) -replace 'unknown time',$(Get-Date -Format 'yyyy-MM-dd')) | Set-Content -Path constant/version.go
-
-          make windows-amd64
-
-          cd bin/core
-          
-          curl -LO https://github.com/yaling888/clash/releases/download/plus_pro/version.txt
-          
-          $core_version = Get-Content version.txt
-          
-          curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-$core_version.zip"
-          curl -LO "https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-v3-$core_version.zip"
-          
-          Expand-Archive -Path "clash-plus-pro-windows-amd64-v3-$core_version.zip" -DestinationPath .
-          
-          Remove-Item -Force version.txt
-          Remove-Item -Force "clash-plus-pro-windows-amd64-v3-$core_version.zip"
-          
-          cd ../
-          
-          mkdir resources
-          cd resources
-          
           curl -L https://raw.githubusercontent.com/Loyalsoldier/geoip/release/Country.mmdb -o Country.mmdb
           curl -L https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat -o geosite.dat
           curl -L https://github.com/yaling888/yacd/archive/gh-pages.zip -o yacd-gh-pages.zip
           
-          Expand-Archive -Path yacd-gh-pages.zip -DestinationPath .
+          unzip yacd-gh-pages.zip
+          mv yacd-gh-pages dashboard
+          zip –r dashboard.zip dashboard
+          zip Country.mmdb.zip Country.mmdb
+          zip geosite.dat.zip geosite.dat
           
-          Rename-Item yacd-gh-pages dashboard
+          rm -f yacd-gh-pages.zip
+          rm -f Country.mmdb
+          rm -f geosite.dat
+          rm -rf dashboard
           
-          Compress-Archive -Path Country.mmdb -DestinationPath Country.mmdb.zip
-          Compress-Archive -Path geosite.dat -DestinationPath geosite.dat.zip
-          Compress-Archive -Path dashboard -DestinationPath dashboard.zip
+          cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/amd64/resources
+          cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/arm64/resources
+          cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/386/resources
+          cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/arm32v7/resources
           
-          Remove-Item -Force Country.mmdb
-          Remove-Item -Force geosite.dat
-          Remove-Item -Force yacd-gh-pages.zip
-          Remove-Item -Force -Recurse dashboard/
+          version=$(git describe --tags --always)
+          core_version=$(curl -L https://github.com/yaling888/clash/releases/download/plus_pro/version.txt)
           
-          cd ../../
+          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-$core_version.zip
+          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-v3-$core_version.zip
+          curl -L -o bin/arm64/core/clash-plus-pro-windows-arm64-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-arm64-$core_version.zip
+          curl -L -o bin/386/core/clash-plus-pro-windows-386-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-386-$core_version.zip
+          curl -L -o bin/arm32v7/core/clash-plus-pro-windows-arm32v7-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-arm32v7-$core_version.zip
           
-          Rename-Item bin soulx && cd soulx
-          Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-$(git describe --tags --always).zip
+          unzip bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip -d bin/amd64/core/
+          rm -f bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip
           
-          cd core
-          Remove-Item -Force "clash-plus-pro-windows-amd64-v3.exe"
-          Remove-Item -Force "clash-plus-pro-windows-amd64-$core_version.zip"
-          cd ../
-          Compress-Archive -Path . -DestinationPath ../released/SoulX-windows-amd64-without-core-$(git describe --tags --always).zip
+          unzip bin/arm64/core/clash-plus-pro-windows-arm64-$core_version.zip -d bin/arm64/core/
+          rm -f bin/arm64/core/clash-plus-pro-windows-arm64-$core_version.zip
+          
+          unzip bin/386/core/clash-plus-pro-windows-386-$core_version.zip -d bin/386/core/
+          rm -f bin/386/core/clash-plus-pro-windows-386-$core_version.zip
+          
+          unzip bin/arm32v7/core/clash-plus-pro-windows-arm32v7-$core_version.zip -d bin/arm32v7/core/
+          rm -f bin/arm32v7/core/clash-plus-pro-windows-arm32v7-$core_version.zip
+          
+          cd bin
+          
+          mv amd64 soulx
+          zip –r SoulX-windows-amd64-$version.zip soulx
+          rm -f soulx/clash-plus-pro-windows-amd64-v3.exe soulx/clash-plus-pro-windows-amd64-$core_version.zip
+          zip –r SoulX-windows-amd64-without-core-$version.zip soulx
+          rm -rf soulx
+          
+          mv arm64 soulx
+          zip –r SoulX-windows-arm64-$version.zip soulx
+          rm -f soulx/clash-plus-pro-windows-arm64.exe
+          zip –r SoulX-windows-arm64-without-core-$version.zip soulx
+          rm -rf soulx
+          
+          mv 386 soulx
+          zip –r SoulX-windows-386-$version.zip soulx
+          rm -f soulx/clash-plus-pro-windows-386.exe
+          zip –r SoulX-windows-386-without-core-$version.zip soulx
+          rm -rf soulx
+          
+          mv arm32v7 soulx
+          zip –r SoulX-windows-arm32v7-$version.zip soulx
+          rm -f soulx/clash-plus-pro-windows-arm32v7.exe
+          zip –r SoulX-windows-arm32v7-without-core-$version.zip soulx
+          rm -rf soulx
 
-      #- name: Set sha date
-      #  id: sha_date
-      #  run: |
-      #    echo "::set-output name=file_sha::$(git describe --tags --always)"
-      #    echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
+      - name: Set sha date
+        if: startsWith(github.ref, 'refs/tags/') == false
+        id: sha_date
+        run: |
+          echo "::set-output name=file_sha::$(git describe --tags --always)"
+          echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
 
-      #- name: Upload files to Artifacts
-      #  uses: actions/upload-artifact@v2
-      #  if: startsWith(github.ref, 'refs/tags/') == false
-      #  with:
-      #    name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
-      #    path: |
-      #      released/*
+      - name: Upload files to Artifacts
+        uses: actions/upload-artifact@v2
+        if: startsWith(github.ref, 'refs/tags/') == false
+        with:
+          name: SoulX-windows-amd64-${{ steps.sha_date.outputs.file_sha }}-${{ steps.sha_date.outputs.file_date }}
+          path: |
+            bin/*
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: released/*
+          files: bin/*
           draft: true
