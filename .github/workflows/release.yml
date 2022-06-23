@@ -31,14 +31,9 @@ jobs:
           
           unzip yacd-gh-pages.zip
           mv yacd-gh-pages dashboard
-          zip –r dashboard.zip dashboard
+          zip -r dashboard.zip dashboard
           zip Country.mmdb.zip Country.mmdb
           zip geosite.dat.zip geosite.dat
-          
-          rm -f yacd-gh-pages.zip
-          rm -f Country.mmdb
-          rm -f geosite.dat
-          rm -rf dashboard
           
           cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/amd64/resources
           cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/arm64/resources
@@ -69,27 +64,27 @@ jobs:
           cd bin
           
           mv amd64 soulx
-          zip –r SoulX-windows-amd64-$version.zip soulx
-          rm -f soulx/clash-plus-pro-windows-amd64-v3.exe soulx/clash-plus-pro-windows-amd64-$core_version.zip
-          zip –r SoulX-windows-amd64-without-core-$version.zip soulx
+          zip -r SoulX-windows-amd64-$version.zip soulx
+          rm -f soulx/core/clash-plus-pro-windows-amd64-v3.exe soulx/core/clash-plus-pro-windows-amd64-$core_version.zip
+          zip -r SoulX-windows-amd64-without-core-$version.zip soulx
           rm -rf soulx
           
           mv arm64 soulx
-          zip –r SoulX-windows-arm64-$version.zip soulx
-          rm -f soulx/clash-plus-pro-windows-arm64.exe
-          zip –r SoulX-windows-arm64-without-core-$version.zip soulx
+          zip -r SoulX-windows-arm64-$version.zip soulx
+          rm -f soulx/core/clash-plus-pro-windows-arm64.exe
+          zip -r SoulX-windows-arm64-without-core-$version.zip soulx
           rm -rf soulx
           
           mv 386 soulx
-          zip –r SoulX-windows-386-$version.zip soulx
-          rm -f soulx/clash-plus-pro-windows-386.exe
-          zip –r SoulX-windows-386-without-core-$version.zip soulx
+          zip -r SoulX-windows-386-$version.zip soulx
+          rm -f soulx/core/clash-plus-pro-windows-386.exe
+          zip -r SoulX-windows-386-without-core-$version.zip soulx
           rm -rf soulx
           
           mv arm32v7 soulx
-          zip –r SoulX-windows-arm32v7-$version.zip soulx
-          rm -f soulx/clash-plus-pro-windows-arm32v7.exe
-          zip –r SoulX-windows-arm32v7-without-core-$version.zip soulx
+          zip -r SoulX-windows-arm32v7-$version.zip soulx
+          rm -f soulx/core/clash-plus-pro-windows-arm32v7.exe
+          zip -r SoulX-windows-arm32v7-without-core-$version.zip soulx
           rm -rf soulx
 
       - name: Set sha date
