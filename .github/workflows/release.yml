@@ -43,7 +43,7 @@ jobs:
           cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/arm32v7/resources
           
           version=$(git describe --tags --always)
-          core_version=$(curl -L https://github.com/yaling888/clash/releases/latest | grep -o -E "windows-amd64-v\d{1,3}\.\d{1,3}\.\d{1,6}" | head -1 | cut -d'-' -f3 | xargs echo -n)
+          core_version=$(curl -sSL https://github.com/yaling888/clash/releases/latest | grep -o -E "windows-amd64-v\d{1,3}\.\d{1,3}\.\d{1,6}" | head -1 | cut -d'-' -f3)
           
           curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-amd64-$core_version.zip
           curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-amd64-v3-$core_version.zip
