@@ -5,14 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v3
         with:
-          go-version: 1.17.x
+          check-latest: true
+          go-version: '1.17'
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
       - name: Build
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           go install github.com/akavel/rsrc@latest
 
@@ -41,13 +43,13 @@ jobs:
           cp Country.mmdb.zip geosite.dat.zip dashboard.zip bin/arm32v7/resources
           
           version=$(git describe --tags --always)
-          core_version=$(curl -L https://github.com/yaling888/clash/releases/download/plus_pro/version.txt)
+          core_version=$(curl -L https://github.com/yaling888/clash/releases/latest | grep -o -E "windows-amd64-v\d{1,3}\.\d{1,3}\.\d{1,6}" | head -1 | cut -d'-' -f3 | xargs echo -n)
           
-          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-$core_version.zip
-          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-amd64-v3-$core_version.zip
-          curl -L -o bin/arm64/core/clash-plus-pro-windows-arm64-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-arm64-$core_version.zip
-          curl -L -o bin/386/core/clash-plus-pro-windows-386-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-386-$core_version.zip
-          curl -L -o bin/arm32v7/core/clash-plus-pro-windows-arm32v7-$core_version.zip https://github.com/yaling888/clash/releases/download/plus_pro/clash-plus-pro-windows-arm32v7-$core_version.zip
+          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-amd64-$core_version.zip
+          curl -L -o bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-amd64-v3-$core_version.zip
+          curl -L -o bin/arm64/core/clash-plus-pro-windows-arm64-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-arm64-$core_version.zip
+          curl -L -o bin/386/core/clash-plus-pro-windows-386-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-386-$core_version.zip
+          curl -L -o bin/arm32v7/core/clash-plus-pro-windows-arm32v7-$core_version.zip https://github.com/yaling888/clash/releases/download/$core_version/clash-plus-pro-windows-arm32v7-$core_version.zip
           
           unzip bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip -d bin/amd64/core/
           rm -f bin/amd64/core/clash-plus-pro-windows-amd64-v3-$core_version.zip
@@ -87,12 +89,12 @@ jobs:
           zip -r SoulX-windows-arm32v7-without-core-$version.zip soulx
           rm -rf soulx
 
-      - name: Set sha date
-        if: startsWith(github.ref, 'refs/tags/') == false
-        id: sha_date
-        run: |
-          echo "::set-output name=file_sha::$(git describe --tags --always)"
-          echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
+      #- name: Set sha date
+      #  if: startsWith(github.ref, 'refs/tags/') == false
+      #  id: sha_date
+      #  run: |
+      #    echo "::set-output name=file_sha::$(git describe --tags --always)"
+      #    echo "::set-output name=file_date::$(Get-Date -Format 'yyyy-MM-dd')"
 
       #- name: Upload files to Artifacts
       #  uses: actions/upload-artifact@v2
